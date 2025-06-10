@@ -1,16 +1,21 @@
 from line import Line
 from point import Point
 
+def get_midpoint(a, b):
+    if (a > b):
+        (a, b) = (b, a)
+    return ((b - a) / 2) + a
+
 class Cell:
     def __init__(self, window):
         self.has_left_wall = True
         self.has_right_wall = True
         self.has_top_wall = True
         self.has_bottom_wall = True
-        self.__x1 = -1
-        self.__x2 = -1
-        self.__y1 = -1
-        self.__y2 = -1
+        self.x1 = -1
+        self.x2 = -1
+        self.y1 = -1
+        self.y2 = -1
         self.__win = window
 
     def draw(self, x1, y1, x2, y2):
@@ -28,3 +33,11 @@ class Cell:
         if self.has_bottom_wall:
             self.__win.draw_line(Line(Point(x1, y2), Point(x2, y2)), "black")
 
+    def draw_move(self, to_cell, undo=False):
+        fill = "gray" if undo else "red"
+        x1 = get_midpoint(self.x1, self.x2)
+        x2 = get_midpoint(to_cell.x1, to_cell.x2)
+        y1 = get_midpoint(self.y1, self.y2)
+        y2 = get_midpoint(to_cell.y1, to_cell.y2)
+
+        self.__win.draw_line(Line(Point(x1, y1), Point(x2, y2)), fill)
