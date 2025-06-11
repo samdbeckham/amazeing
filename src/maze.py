@@ -10,7 +10,7 @@ class Maze:
         num_cols,
         cell_size_x,
         cell_size_y,
-        win
+        win=None
     ):
         self.x1 = x1
         self.y1 = y1
@@ -36,5 +36,7 @@ class Maze:
         self.__animate()
 
     def __animate(self):
+        if self.win is None:
+            return
         self.win.redraw()
         time.sleep(0.05)
