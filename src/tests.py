@@ -23,5 +23,14 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(m1._Maze__cells), num_cols)
         self.assertEqual(len(m1._Maze__cells[0]), num_rows)
 
+    def test_break_e_and_e(self):
+        m1 = Maze(0, 0, 10, 10, 10, 10)
+        self.assertTrue(m1._Maze__cells[0][0].has_top_wall)
+        self.assertTrue(m1._Maze__cells[-1][-1].has_bottom_wall)
+
+        m1._Maze__break_entrance_and_exit()
+        self.assertFalse(m1._Maze__cells[0][0].has_top_wall)
+        self.assertFalse(m1._Maze__cells[-1][-1].has_bottom_wall)
+
 if __name__ == "__main__":
     unittest.main()

@@ -24,16 +24,21 @@ class Cell:
         self.x2 = x2
         self.y2 = y2
 
+        color_foregreound = "black"
+        color_background = "white"
+
+        top_color = color_foregreound if self.has_top_wall else color_background
+        left_color = color_foregreound if self.has_left_wall else color_background
+        bottom_color = color_foregreound if self.has_bottom_wall else color_background
+        right_color = color_foregreound if self.has_right_wall else color_background
+
         if self.__win is None:
             return
-        if self.has_left_wall:
-            self.__win.draw_line(Line(Point(x1, y1), Point(x1, y2)), "black")
-        if self.has_right_wall:
-            self.__win.draw_line(Line(Point(x2, y1), Point(x2, y2)), "black")
-        if self.has_top_wall:
-            self.__win.draw_line(Line(Point(x1, y1), Point(x2, y1)), "black")
-        if self.has_bottom_wall:
-            self.__win.draw_line(Line(Point(x1, y2), Point(x2, y2)), "black")
+
+        self.__win.draw_line(Line(Point(x1, y1), Point(x2, y1)), top_color)
+        self.__win.draw_line(Line(Point(x1, y1), Point(x1, y2)), left_color)
+        self.__win.draw_line(Line(Point(x1, y2), Point(x2, y2)), bottom_color)
+        self.__win.draw_line(Line(Point(x2, y1), Point(x2, y2)), right_color)
 
     def draw_move(self, to_cell, undo=False):
         if self.__win is None:
