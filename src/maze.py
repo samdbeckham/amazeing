@@ -1,4 +1,5 @@
 import time
+import random
 from cell import Cell
 
 class Maze:
@@ -11,8 +12,11 @@ class Maze:
         cell_size_x,
         cell_size_y,
         win=None,
-        animated=False
+        animated=0,
+        seed=None
     ):
+        if seed is not None: 
+            random.seed(seed)
         self.x1 = x1
         self.y1 = y1
         self.num_rows = num_rows
@@ -24,6 +28,7 @@ class Maze:
         self.__cells = []
         self.__create_cells()
         self.__break_entrance_and_exit()
+        self.__break_walls_r(0, 0)
 
     def __create_cells(self):
         for i in range(self.num_cols):
@@ -42,11 +47,50 @@ class Maze:
         if self.win is None:
             return
         self.win.redraw()
-        if self.animated:
-            time.sleep(0.05)
+        if self.animated > 0:
+            time.sleep(self.animated)
 
     def __break_entrance_and_exit(self):
         self.__cells[0][0].has_top_wall = False
         self.__draw_cell(0, 0)
         self.__cells[-1][-1].has_bottom_wall = False
         self.__draw_cell(self.num_cols - 1, self.num_rows - 1)
+
+    def __break_walls_r(self, i, j):
+        current_cell = self.__cells[i][j]
+        current_cell.visited = True
+        
+        while True:
+            directions = []
+            if i > 0 and not self.__cells[i - 1][j].visited:
+                directions.append(("LEFT", i - 1, j))
+            if i < self.num_cols - 1 and not self.__cells[i + 1][j].visited:
+                directions.append(("RIGHT", i + 1, j))
+            if j > 0 and not self.__cells[i][j - 1].visited:
+                directions.append(("UP", i, j - 1))
+            if j < self.num_rows - 1 and not self.__cells[i][j + 1].visited:
+                directions.append(("DOWN", i, j + 1))
+            if len(directions) == 0:
+                self.__draw_cell(i, j)
+                return
+
+            (dir, new_i, new_j) = directions[random.randrange(len(directions))]
+
+            match dir:
+                case "UP":
+                    current_cell.has_top_wall = False
+                    self.__cells[new_i][new_j].has_bottom_wall = False
+                case "RIGHT":
+                    current_cell.has_right_wall = False
+                    self.__cells[new_i][new_j].has_left_wall = False
+                case "DOWN":
+                    current_cell.has_bottom_wall = False
+                    self.__cells[new_i][new_j].has_top_wall = False
+                case "LEFT":
+                    current_cell.has_left_wall = False
+                    self.__cells[new_i][new_j].has_right_wall = False
+                case _:
+                    raise Exception("No direction specified")
+
+            self.__break_walls_r(new_i, new_j)
+
