@@ -30,6 +30,7 @@ class Maze:
         self.__break_entrance_and_exit()
         self.__break_walls_r(0, 0)
         self.__reset_cells_visited()
+        self.solve()
 
     def __create_cells(self):
         for i in range(self.num_cols):
@@ -99,3 +100,61 @@ class Maze:
         for col in self.__cells:
             for cell in col:
                 cell.visited = False
+
+    def solve(self):
+        return self.__solve_r(0, 0)
+
+    def __solve_r(self, i, j):
+        self.__animate()
+        current = self.__cells[i][j]
+        current.visited = True
+
+        if i >= self.num_cols - 1 and j >= self.num_rows - 1:
+            return True
+
+        if j > 0:
+            x = i
+            y = j - 1
+            target = self.__cells[x][y]
+            if not target.has_bottom_wall and not target.visited:
+                current.draw_move(target)
+                if self.__solve_r(x, y):
+                    return True
+                else:
+                    target.draw_move(current, undo=True)
+
+        if i < self.num_cols - 1:
+            x = i + 1
+            y = j
+            target = self.__cells[x][y]
+            if not target.has_left_wall and not target.visited:
+                current.draw_move(target)
+                if self.__solve_r(x, y):
+                    return True
+                else:
+                    target.draw_move(current, undo=True)
+
+        if j < self.num_rows - 1:
+            x = i
+            y = j + 1
+            target = self.__cells[x][y]
+            if not target.has_top_wall and not target.visited:
+                current.draw_move(target)
+                if self.__solve_r(x, y):
+                    return True
+                else:
+                    target.draw_move(current, undo=True)
+
+        if i > 0:
+            x = i - 1
+            y = j
+            target = self.__cells[x][y]
+            if not target.has_right_wall and not target.visited:
+                current.draw_move(target)
+                if self.__solve_r(x, y):
+                    return True
+                else:
+                    target.draw_move(current, undo=True)
+
+        return False
+
